@@ -235,6 +235,26 @@ filed-clock display.
 
 ---
 
+## Build log
+
+Built solo during the Codegeist 2026 submission period. Development ran in local folders and was published to GitHub at
+the end of the first build, so this repository's history starts with a single commit; later changes are committed as
+they happen. The milestones, from the project's dated progress notes:
+
+| Date | Milestone | Tests |
+| --- | --- | ---: |
+| Oct 29, 2026 | Idea and plan; one-day spikes proving each Forge capability (Custom UI, JSM panel, Forge SQL, Forge LLMs, Rovo agent, MCP, Teamwork Graph read, graph connector) | |
+| Oct 29 | App registered. Rulebook v1: 7 regimes, 19 stages, verbatim citations, counting engine (time zones, DST, US holidays, month-end) | 27 |
+| Oct 29 | Panel mockups designed and reviewed (light and dark); Forge SQL schema, incident service, append-only audit trail | 38 |
+| Oct 29 | Detection by label with an internal note; notice field catalogue per regulator; evidence board and open questions; question to Jira task; hourly reminders. Live-verified on a JSM site | 72 |
+| Oct 29 | The issue panel: deadline board with live countdown, scoping check with preview, evidence, questions, audit trail | 75 |
+| Oct 29 | Notices in Confluence with gated sign-off and filing; Assemble evidence with Forge LLMs and citations; Teamwork Graph read and connector; Clerk Rovo agent and MCP tools; practice drill and post-incident summary | 94 |
+| Oct 29 | Production deploy; connector connected; MCP tools verified in Rovo Studio; notice checklists for GDPR Art. 34, NPC, HIPAA, SEC 8-K; dark theme, keyboard and contrast checks | 95 |
+| Oct 30 | Five-step progress strip, live refresh on issue changes, answers taken from a finished task's comment, filed notices stop their clock; demo film v2 published | 107 |
+| Oct 30 | Privacy policy, terms and user guide published; installation link on; Jira-only edition with the personal data reporting API submitted to the Atlassian Marketplace | 107 |
+
+---
+
 ## Docs in this repo
 
 - [docs/RULEBOOK.md](docs/RULEBOOK.md): every regime and stage, with the cited article and counting rule

@@ -1,0 +1,22 @@
+{
+  "name": "72hours-panel",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "preview:fixture": "esbuild ../../scripts/panel-fixture.ts --bundle --platform=node --format=esm --outfile=preview/fixture-build.mjs --log-level=warning && node preview/fixture-build.mjs preview/fixture.json",
+    "preview:build": "vite build --config vite.preview.config.js"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@forge/bridge": "^7.2.1",
+    "luxon": "^3.7.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.0"
+  }
+}

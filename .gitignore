@@ -1,0 +1,23 @@
+node_modules/
+.idea/
+
+/.forge/
+.gstack/
+
+# Build output (rebuilt by `npm run build` in static/panel before deploy)
+static/panel/dist/
+static/panel/preview-dist/
+static/panel/preview/fixture-build.mjs
+static/panel/preview/fixture.json
+
+# Large media: kept on disk and YouTube, not in git (GitHub rejects files over 100 MB)
+videos versions/
+docs/video/*.mp4
+*.log
+
+# Internal submission notes and licensed audio: kept locally, never published
+docs/DEVPOST.md
+docs/SUBMISSION.md
+docs/MARKETPLACE.md
+docs/video/*.mp3
+AGENTS.md

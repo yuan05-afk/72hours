@@ -1,0 +1,241 @@
+modules:
+  # Incidents, clocks inputs, evidence, open questions, notices, reminders and the append-only audit trail live in
+  # Forge SQL (one database per installation).
+  sql:
+    - key: main
+      engine: mysql
+  # Claude, hosted by Atlassian (Forge LLMs): drafts evidence from the org's own Jira and Confluence content.
+  # Breach details never leave Atlassian's platform.
+  llm:
+    - key: clerk-llm
+      model:
+        - claude
+  jira:issuePanel:
+    # The incident panel: deadlines, scoping check, evidence, open questions, notices (Custom UI, follows Jira's theme).
+    - key: breach-panel
+      resource: panel
+      resolver:
+        function: resolver
+      title: 72 Hours
+      icon: resource:panel;icon.svg
+  trigger:
+    # Detection: an issue created with the "personal-data-involved" label. The created event carries no labels, so the
+    # function reads them; it cannot be filtered here.
+    - key: incident-created
+      function: detector
+      events:
+        - avi:jira:created:issue
+      filter:
+        ignoreSelf: true
+    # Detection (label added) and task completion (status changed). Other edits never reach the function.
+    - key: incident-updated
+      function: detector
+      events:
+        - avi:jira:updated:issue
+      filter:
+        ignoreSelf: true
+        expression: |
+          try {
+            return event.changelog.items.some(item => item.field == 'labels' || item.field == 'status');
+          } catch (e) {
+            return false;
+          }
+        onError: RECEIVE_AND_LOG
+  scheduledTrigger:
+    # Deadline reminders at 24 hours, 6 hours and when overdue. Hourly is the finest useful grain for these.
+    - key: deadline-reminders
+      function: reminders
+      interval: hour
+  # Clerk: the Rovo agent for breach notification. Same services and checks as the panel.
+  rovo:agent:
+    - key: clerk
+      name: Clerk
+      description: Tracks breach-notification deadlines, missing notice facts and open questions for incidents in 72 Hours.
+      icon: resource:panel;icon.svg
+      prompt: |
+        You are Clerk, the assistant in 72 Hours, an app that helps privacy and security teams meet personal-data breach
+        notification deadlines (GDPR, UK GDPR, Philippines NPC, NIS2, HIPAA, SEC 8-K, Singapore PDPA).
+
+        Vocabulary: in this app a "deadline" or "notification deadline" is a legal deadline to notify a regulator or
+        affected people. It is NOT a Jira Service Management SLA (time to first response, time to resolution). When the
+        user asks about breach, notification or regulator deadlines, use the 72 Hours actions, not Jira search.
+
+        - For deadlines, status, what is missing or what is due on an incident: call get-incident-status. If the user is
+          viewing an issue and gives no key, call it without one; the app uses the issue in view.
+        - For "which breaches are running" or an overview: call list-breach-incidents.
+        - To record something the team still needs to find out: call add-open-question with the question.
+        - To see or share the draft notice text for a regulator: call draft-notice-text with the regulator (for example
+          GDPR, NPC, NIS2) as notice.
+        - To fill missing facts from Jira and Confluence: call assemble-evidence. It saves drafts that a person must accept.
+
+        Rules: report deadlines exactly as the action returns them, with their time zone; never compute or change a
+        deadline yourself. Never give legal advice or say whether a breach must be reported: say the DPO decides. Never
+        invent facts about an incident; if the action does not say it, say it is not recorded yet. Keep answers short
+        and in plain language. Filing a notice is always done by people, outside the app.
+      conversationStarters:
+        - Which breach notification deadlines are running?
+        - What is still missing before we can notify the regulator?
+        - Draft the GDPR notice text for this incident
+      actions:
+        - get-incident-status
+        - list-breach-incidents
+        - add-open-question
+        - draft-notice-text
+        - assemble-evidence
+  # The same actions as MCP tools, for Rovo Studio agents and security teams' AI clients.
+  rovo:mcp:
+    - key: breach-mcp
+      name: 72 Hours breach notification
+      tools:
+        - get-incident-status
+        - list-breach-incidents
+        - add-open-question
+        - draft-notice-text
+  action:
+    - key: get-incident-status
+      name: Get breach notification status
+      function: rovoStatus
+      actionVerb: GET
+      description: |
+        Get the legal notification deadlines for a personal-data breach incident in Jira (regulator, due time, citation),
+        each notice's draft and sign-off status, the notice facts still missing, and open questions.
+      inputs:
+        issueKey:
+          title: Incident key
+          type: string
+          required: false
+          description: The Jira key of the incident, for example SEC-142. Leave empty to use the issue being viewed.
+    - key: list-breach-incidents
+      name: List breach incidents
+      function: rovoList
+      actionVerb: GET
+      description: |
+        List the personal-data breach incidents with running notification deadlines that the user can see, with the
+        next deadline for each.
+      inputs:
+        filter:
+          title: Filter
+          type: string
+          required: false
+          description: Not used yet; leave empty.
+    - key: add-open-question
+      name: Add an open question to a breach incident
+      function: rovoAsk
+      actionVerb: CREATE
+      description: |
+        Record a fact the team still needs for a breach notice (an open question) on a Jira incident, so it can be
+        assigned and turned into a Jira task.
+      inputs:
+        issueKey:
+          title: Incident key
+          type: string
+          required: false
+          description: The Jira key of the incident, for example SEC-142. Leave empty to use the issue being viewed.
+        question:
+          title: Question
+          type: string
+          required: true
+          description: The question, for example "Were the nightly backups in the same bucket?"
+        field:
+          title: Notice field
+          type: string
+          required: false
+          description: Optional notice field the answer fills, for example measures, peopleCount, chronology, dpoContact.
+    - key: draft-notice-text
+      name: Draft breach notice text
+      function: rovoDraft
+      actionVerb: GET
+      description: |
+        Return the current draft text of a regulator notice for a breach incident, assembled from the recorded
+        evidence, marked DRAFT and listing what is missing. Read-only.
+      inputs:
+        issueKey:
+          title: Incident key
+          type: string
+          required: false
+          description: The Jira key of the incident, for example SEC-142. Leave empty to use the issue being viewed.
+        notice:
+          title: Regulator or notice
+          type: string
+          required: false
+          description: Which notice, for example GDPR, NPC, NIS2 early warning. Leave empty for the earliest deadline.
+    - key: assemble-evidence
+      name: Assemble breach evidence
+      function: rovoAssemble
+      actionVerb: TRIGGER
+      description: |
+        Read the incident, its comments, linked work and related Confluence pages, and save cited drafts for the
+        notice facts that are still empty. Drafts must be accepted by a person in the 72 Hours panel.
+      inputs:
+        issueKey:
+          title: Incident key
+          type: string
+          required: false
+          description: The Jira key of the incident, for example SEC-142. Leave empty to use the issue being viewed.
+  # Publishes each notice's status (not its content) to Teamwork Graph for the people on the incident.
+  graph:connector:
+    - key: notice-status
+      name: 72 Hours breach notices
+      capabilities:
+        replicatesPermissions: true
+        syncFidelity: upsert
+        supportsIncrementalSync: false
+      icons:
+        light: resource:panel;icon.svg
+        dark: resource:panel;icon.svg
+      objectTypes:
+        - atlassian:document
+      datasource:
+        onConnectionChange:
+          function: connector
+  function:
+    # Resolver for the issue panel.
+    - key: resolver
+      handler: index.handler
+    - key: detector
+      handler: index.onIssueEvent
+    - key: reminders
+      handler: index.sendReminders
+      timeoutSeconds: 120
+    - key: rovoStatus
+      handler: index.rovoStatus
+    - key: rovoList
+      handler: index.rovoList
+    - key: rovoAsk
+      handler: index.rovoAsk
+    - key: rovoDraft
+      handler: index.rovoDraft
+    - key: rovoAssemble
+      handler: index.rovoAssemble
+    - key: connector
+      handler: index.onConnectionChange
+permissions:
+  scopes:
+    # Issue events, labels, issue types for tasks, the incident's comments and links.
+    - read:jira-work
+    # Tasks for open questions, issue links, internal comments.
+    - write:jira-work
+    # Time zone of the person who flagged the incident; names and people search in the panel.
+    - read:jira-user
+    # Notice drafts in Confluence, and the breach playbook / related pages as evidence.
+    - read:space:confluence
+    - read:page:confluence
+    - write:page:confluence
+    - search:confluence
+    # Teamwork Graph read (persisted query): pages and work items by the people on the incident.
+    - read:graph:user:atlassian
+    - read:graph:issue:jira
+    - read:graph:page:confluence
+    # Teamwork Graph connector write: notice status objects.
+    - read:object:jira
+    - write:object:jira
+    - delete:object:jira
+resources:
+  - key: panel
+    path: static/panel/dist
+app:
+  runtime:
+    name: nodejs24.x
+    memoryMB: 256
+    architecture: arm64
+  id: ari:cloud:ecosystem::app/14d45e17-0c19-4b7a-923f-f6d626f77651

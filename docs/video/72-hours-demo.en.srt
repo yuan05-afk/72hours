@@ -1,0 +1,249 @@
+1
+00:00:01,000 --> 00:00:03,790
+When personal data leaks, the
+law starts a clock.
+
+2
+00:00:04,120 --> 00:00:08,150
+Under GDPR, the regulator must hear from
+you within seventy-two hours.
+
+3
+00:00:08,420 --> 00:00:10,130
+The Philippines' privacy commission:
+
+4
+00:00:10,400 --> 00:00:11,130
+also seventy-two.
+
+5
+00:00:11,660 --> 00:00:15,010
+And under NIS2, an early warning
+is due in twenty-four.
+
+6
+00:00:15,660 --> 00:00:17,770
+Each regulator wants specific facts:
+
+7
+00:00:18,160 --> 00:00:20,850
+what happened, whose data,
+how many people,
+
+8
+00:00:20,900 --> 00:00:22,310
+and what you've done about it.
+
+9
+00:00:22,500 --> 00:00:25,490
+On day one, those facts are
+scattered across tickets,
+
+10
+00:00:25,740 --> 00:00:28,630
+comments, Confluence pages and
+people's heads.
+
+11
+00:00:29,000 --> 00:00:32,270
+72 Hours is a Forge app for Jira
+Service Management,
+
+12
+00:00:32,580 --> 00:00:35,750
+built for the privacy and security teams
+who have to report a breach.
+
+13
+00:00:36,160 --> 00:00:39,810
+It tracks every legal deadline, gathers
+the facts with their sources,
+
+14
+00:00:39,940 --> 00:00:43,210
+and drafts each notice, while
+people make every decision.
+
+15
+00:00:43,580 --> 00:00:45,150
+It works in five steps:
+
+16
+00:00:45,720 --> 00:00:49,410
+detect, scope, evidence, notice, and file.
+
+17
+00:00:49,940 --> 00:00:51,350
+Step one: detect.
+
+18
+00:00:51,780 --> 00:00:53,870
+The team adds one label to the incident.
+
+19
+00:00:54,300 --> 00:00:57,490
+72 Hours starts the clock from the
+moment the team became aware,
+
+20
+00:00:57,680 --> 00:01:00,830
+and leaves an internal note so they
+can confirm that time.
+
+21
+00:01:01,060 --> 00:01:02,370
+Step two: scope.
+
+22
+00:01:02,780 --> 00:01:05,630
+A few quick answers, like where the
+affected people live,
+
+23
+00:01:05,760 --> 00:01:08,160
+how many there are, and how serious it is,
+
+24
+00:01:08,180 --> 00:01:09,690
+decide which laws apply.
+
+25
+00:01:10,120 --> 00:01:12,890
+Every deadline lands on one
+board, counting down.
+
+26
+00:01:13,160 --> 00:01:16,210
+Each one is calculated by code
+from the law's own text.
+
+27
+00:01:16,480 --> 00:01:19,370
+Open it, and you see the exact
+article it comes from.
+
+28
+00:01:19,620 --> 00:01:21,170
+Step three: evidence.
+
+29
+00:01:21,600 --> 00:01:25,070
+Press Assemble evidence, and Clerk,
+the app's AI assistant,
+
+30
+00:01:25,260 --> 00:01:29,310
+reads the incident, its comments, linked
+work and Confluence pages,
+
+31
+00:01:29,360 --> 00:01:31,540
+then drafts each fact the regulators need,
+
+32
+00:01:31,560 --> 00:01:32,690
+with its source.
+
+33
+00:01:33,300 --> 00:01:35,690
+Clerk runs on Claude, hosted by Atlassian,
+
+34
+00:01:35,800 --> 00:01:37,570
+so the data stays on the platform.
+
+35
+00:01:37,800 --> 00:01:40,490
+A person reviews every draft
+and accepts it.
+
+36
+00:01:40,660 --> 00:01:43,630
+When a fact is still unknown, ask
+the person who knows.
+
+37
+00:01:43,800 --> 00:01:47,950
+The question becomes a Jira task, and the
+answer flows back into the evidence.
+
+38
+00:01:48,360 --> 00:01:49,790
+Step four: notice.
+
+39
+00:01:50,140 --> 00:01:53,280
+72 Hours drafts each regulator's
+notice in Confluence,
+
+40
+00:01:53,300 --> 00:01:54,960
+with its sources and assumptions.
+
+41
+00:01:54,980 --> 00:01:59,310
+Sign-off unlocks only when every
+required fact has been accepted.
+
+42
+00:01:59,600 --> 00:02:00,950
+Step five: file.
+
+43
+00:02:01,360 --> 00:02:04,270
+The team files with the regulator,
+then records it here.
+
+44
+00:02:04,420 --> 00:02:08,760
+That clock stops, its reminders end, and the
+audit trail keeps who did what,
+
+45
+00:02:08,780 --> 00:02:09,710
+and when.
+
+46
+00:02:10,020 --> 00:02:12,670
+72 Hours works across Atlassian too.
+
+47
+00:02:13,080 --> 00:02:15,150
+Ask Clerk in Rovo what's still missing.
+
+48
+00:02:15,420 --> 00:02:18,670
+Call the same tools from any
+AI agent over MCP.
+
+49
+00:02:19,060 --> 00:02:22,600
+And through Teamwork Graph, it finds what the
+people on the incident have been
+
+50
+00:02:22,620 --> 00:02:26,390
+working on, and publishes each notice's
+status back to the graph.
+
+51
+00:02:26,800 --> 00:02:29,850
+Before a real breach, teams can
+rehearse with a sample drill.
+
+52
+00:02:30,240 --> 00:02:31,210
+72 Hours.
+
+53
+00:02:31,420 --> 00:02:33,260
+Deadlines calculated by code.
+
+54
+00:02:33,280 --> 00:02:34,810
+Drafts written by AI.
+
+55
+00:02:35,180 --> 00:02:36,590
+Decisions made by people.
+
